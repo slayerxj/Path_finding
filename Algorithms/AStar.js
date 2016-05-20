@@ -1,4 +1,5 @@
 var searchGrid = [];
+var searchedNode = [];
 var start;
 var goal;
 
@@ -69,6 +70,7 @@ var aStar = function(map) {
 
                     if (!neighbor.open) {
                         openList.insert(neighbor);
+                        searchedNode.push(neighbor);
                         neighbor.open = true;
                     } else {
                         // up heap?
