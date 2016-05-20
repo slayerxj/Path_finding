@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Visible A* search algorithm, fulfill by HTML5 canvas, concerntrate the performance in JavaScript">
+    <meta name="author" content="Xiong Jie">
+    <title>A* search algorithm in JavaScript</title>
+    <link rel="stylesheet" type="text/css" href="testPage.css">
+    <script type="text/javascript" src="../Utils/heuristic.js"></script>
+    <script type="text/javascript" src="../DataStructure/minHeap.js"></script>
+    <script type="text/javascript" src="../DataStructure/fibonacciHeap.js"></script>
+    <script type="text/javascript" src="../DataStructure/tile.js"></script>
+    <script type="text/javascript" src="../Algorithms/AStar.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simple_first.js"></script>
+</head>
+
+<body>
+    <div class="algorithm">
+        Data structure setting:
+        <form>
+            <select id="dataStructure">
+                <option value="binaryHeap">binary heap</option>
+                <option value="fibonacciHeap">fibonacci heap</option>
+            </select>
+        </form>
+    </div>
+    <button type="button" onclick="init()">init</button>
+    <button type="button" onclick="run()">run</button>
+</body>
+
+<script>
+    var canvasSize, gridScale, obstaclePerc, startX, startY, endX, endY, ctx, startP, goalP, gridSize, tileSizemargin, start, goal;
+
+    function init() {
+        var canvas = document.getElementById("routingMap");
+        if (!canvas) {
+            var canvas = document.createElement("canvas");
+            canvas.id = "routingMap";
+        }
+
+        gridSize = 20;
+        tileSize = 18;
+        margin = 1;
+
+        canvas.width = map[0].length * gridSize;
+        canvas.height = map.length * gridSize;
+        canvas.style.position = "absolute";
+        canvas.style.top = "120px";
+        canvas.style.left = "20px";
+        canvas.style.border = "1px solid #000000";
+        document.body.appendChild(canvas);
+
+        ctx = canvas.getContext("2d");
+
+        map.forEach(function(row, rowNum) {
+            row.forEach(function(tileType, colNum) {
+                switch (tileType) {
+                    case 0:
+                        ctx.fillStyle = "lightgray";
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case 1:
+                        ctx.fillStyle = "gray";
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case 2:
+                        startP = {
+                            x: rowNum,
+                            y: colNum
+                        };
+                        ctx.fillStyle = "red";
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case 3:
+                        goalP = {
+                            x: rowNum,
+                            y: colNum
+                        };
+                        ctx.fillStyle = "green";
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+                    default:
+                }
+            });
+        });
+    }
+
+    function run() {
+        var path = aStar(map);
+
+        ctx.fillStyle = "orange";
+        path.forEach(function(value) {
+            ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
+        });
+    }
+</script>
+
+</html>
