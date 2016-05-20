@@ -1,8 +1,14 @@
 var searchGrid = [];
+var start;
+var goal;
+
+var configure = {
+    visualization = true;
+}
 
 var getNode = function(x, y) {
-    if (searchGrid[x]) {
-        return searchGrid[x][y];
+    if (searchGrid[y]) {
+        return searchGrid[y][x];
     }
     return null;
 }
@@ -25,12 +31,10 @@ var distBetween = function(nodeA, nodeB) {
     return 1;
 };
 
-var aStar = function(start, goal, heuristic) {
-    if (document.getElementById("dataStructure").value = "binaryHeap") {
-        var openList = new MinHeap();
-    } else {
-        openList = new FibonacciHeap();
-    }
+var aStar = function(map) {
+    initSearchGrid(map);
+    var openList = new MinHeap();
+    var heuristic = manhattan;
     openList.insert(start);
     start.open = true;
 
@@ -85,16 +89,21 @@ var reconstructPath = function(current) {
         totalPath.push(current);
     }
 
+    totalPath = totalPath.slice(1, totalPath.length - 1);
     return totalPath;
 };
 
-var initSearchGrid = function(sdf) {
-    for (var i = 0; i < sdf.length; i++) {
-        for (var j = 0; j < sdf[i].length; j++) {
-            if (!searchGrid[i]) {
-                searchGrid[i] = [];
+var initSearchGrid = function(map) {
+    for (var row = 0; row < map.length; row++) {
+        searchGrid[row] = [];
+        for (var col = 0; col < map[row].length; col++) {
+            searchGrid[row][col] = new Node(col, row, (map[row][col] === 1));
+            if (map[row][col] === 2) {
+                start = searchGrid[row][col];
             }
-            searchGrid[i][j] = new Node(i, j, (sdf[i][j] === 0));
+            if (map[row][col] === 3) {
+                goal = searchGrid[row][col];
+            }
         }
     }
 }
