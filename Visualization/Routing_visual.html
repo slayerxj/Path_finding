@@ -58,12 +58,12 @@
             row.forEach(function(tileType, colNum) {
                 switch (tileType) {
                     case NODETYPE.OPEN:
-                        ctx.fillStyle = "lightgray";
+                        ctx.fillStyle = "#E0E0E0";
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
                     case NODETYPE.CLOSE:
-                        ctx.fillStyle = "gray";
+                        ctx.fillStyle = "#707070";
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
@@ -96,19 +96,36 @@
         if (result) {
             var path = result.path;
             var searchedNode = result.searchedNode;
-            ctx.fillStyle = "orange";
-            var i = path.length - 1;
 
+            var i = 0;
             var frame = function() {
+                if (i === searchedNode.length) {
+                    clearInterval(id);
+                    i = path.length - 1;
+                    id = setInterval(pathFrame, 33);
+                } else {
+                    var value = searchedNode[i];
+                    i++;
+                    if (value.x !== goal.x && value.y !== goal.y) {
+                        ctx.fillStyle = "#C0C0C0";
+                        ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
+                    }
+                }
+            };
+
+            var id = setInterval(frame, 33);
+
+            var pathFrame = function() {
                 if (i < 0) {
                     clearInterval(id);
-                }else {
+                } else {
                     var value = path[i];
                     i--;
+                    ctx.fillStyle = "orange";
                     ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
                 }
             };
-            var id = setInterval(frame, 33);
+
         }
     }
 </script>

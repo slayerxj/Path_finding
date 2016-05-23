@@ -1,5 +1,5 @@
 var searchGrid = [];
-var searchedNode = [];
+
 var start;
 var goal;
 
@@ -30,6 +30,7 @@ var distBetween = function(nodeA, nodeB) {
 
 var aStar = function(map) {
     initSearchGrid(map);
+    var searchedNode = [];
     var openList = new MinHeap();
     var heuristic = manhattan;
     openList.insert(start);
@@ -42,7 +43,7 @@ var aStar = function(map) {
         var current = openList.findMinimum();
         if (current === goal) {
             return {
-                path:reconstructPath(goal),
+                path: reconstructPath(goal),
                 searchedNode: searchedNode
             };
         }
