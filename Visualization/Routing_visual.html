@@ -11,6 +11,7 @@
     <script type="text/javascript" src="../DataStructure/minHeap.js"></script>
     <script type="text/javascript" src="../DataStructure/fibonacciHeap.js"></script>
     <script type="text/javascript" src="../DataStructure/tile.js"></script>
+    <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
     <script type="text/javascript" src="../Algorithms/AStar.js"></script>
     <script type="text/javascript" src="../Test/Maps/simple_first.js"></script>
 </head>
@@ -56,17 +57,17 @@
         map.forEach(function(row, rowNum) {
             row.forEach(function(tileType, colNum) {
                 switch (tileType) {
-                    case 0:
+                    case NODETYPE.OPEN:
                         ctx.fillStyle = "lightgray";
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
-                    case 1:
+                    case NODETYPE.CLOSE:
                         ctx.fillStyle = "gray";
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
-                    case 2:
+                    case NODETYPE.START:
                         startP = {
                             x: rowNum,
                             y: colNum
@@ -75,7 +76,7 @@
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
-                    case 3:
+                    case NODETYPE.GOAL:
                         goalP = {
                             x: rowNum,
                             y: colNum
@@ -90,12 +91,25 @@
     }
 
     function run() {
-        var path = aStar(map);
+        var result = aStar(map);
 
-        ctx.fillStyle = "orange";
-        path.forEach(function(value) {
-            ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
-        });
+        if (result) {
+            var path = result.path;
+            var searchedNode = result.searchedNode;
+            ctx.fillStyle = "orange";
+            var i = path.length - 1;
+
+            var frame = function() {
+                if (i < 0) {
+                    clearInterval(id);
+                }else {
+                    var value = path[i];
+                    i--;
+                    ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
+                }
+            };
+            var id = setInterval(frame, 33);
+        }
     }
 </script>
 

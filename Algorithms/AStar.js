@@ -3,10 +3,6 @@ var searchedNode = [];
 var start;
 var goal;
 
-var configure = {
-    visualization = true;
-}
-
 var getNode = function(x, y) {
     if (searchGrid[y]) {
         return searchGrid[y][x];
@@ -45,7 +41,10 @@ var aStar = function(map) {
     while (!openList.isEmpty()) {
         var current = openList.findMinimum();
         if (current === goal) {
-            return reconstructPath(goal);
+            return {
+                path:reconstructPath(goal),
+                searchedNode: searchedNode
+            };
         }
 
         openList.extractMinimum();
