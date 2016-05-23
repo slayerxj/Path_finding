@@ -67,14 +67,12 @@ var aStar = function(map) {
                     neighbor.inertia = i;
                     neighbor.gScore = tentativeGScore;
                     neighbor.value = neighbor.gScore + heuristic(neighbor, goal);
+                }
 
-                    if (!neighbor.open) {
-                        openList.insert(neighbor);
-                        searchedNode.push(neighbor);
-                        neighbor.open = true;
-                    } else {
-                        // up heap?
-                    }
+                if (!neighbor.open) {
+                    openList.insert(neighbor);
+                    searchedNode.push(neighbor);
+                    neighbor.open = true;
                 }
             }
         }

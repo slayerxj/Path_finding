@@ -106,7 +106,7 @@
                 } else {
                     var value = searchedNode[i];
                     i++;
-                    if (value.x !== goal.x && value.y !== goal.y) {
+                    if (!(value.x === goal.x && value.y === goal.y)) {
                         ctx.fillStyle = "#C0C0C0";
                         ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
                     }
