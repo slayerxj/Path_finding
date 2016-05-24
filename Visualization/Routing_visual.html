@@ -212,6 +212,10 @@
             mousePressing = true;
         });
 
+        canvas.addEventListener("mouseout", function(e) {
+            mousePressing = false;
+        });
+
         canvas.addEventListener("mouseup", function(e) {
             mousePressing = false;
         });
