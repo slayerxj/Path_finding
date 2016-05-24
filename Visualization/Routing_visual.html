@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
     <script type="text/javascript" src="../DataStructure/nodeColor.js"></script>
     <script type="text/javascript" src="../Algorithms/AStar.js"></script>
+    <script type="text/javascript" src="../Test/Performance/timer.js"></script>
     <script type="text/javascript" src="../Test/Maps/empty.js"></script>
     <script type="text/javascript" src="../Test/Maps/simpleStraight.js"></script>
     <script type="text/javascript" src="../Test/Maps/simplePoly.js"></script>
@@ -63,7 +64,7 @@
             canvas.id = "routingMap";
         }
 
-        gridSize = 10;
+        gridSize = 20;
         margin = 1;
         tileSize = gridSize - margin * 2;
 
@@ -113,9 +114,10 @@
                 }
             });
         });
-    }
+    };
 
     function scanCanvas() {
+
         var canvas = document.getElementById("routingMap");
         ctx = canvas.getContext("2d");
         var width = canvas.width;
@@ -149,12 +151,17 @@
             realMap.push(row);
         }
 
+
         return realMap;
     }
 
     function run() {
+        timer.start("Scan canvas");
         map = scanCanvas();
+        timer.stop();
+        timer.start("A* path finding");
         var result = aStar(map);
+        timer.stop();
 
         if (result) {
             var path = result.path;
@@ -216,11 +223,11 @@
                 var nodeX = Math.floor(mousePos.x / gridSize);
                 var nodeY = Math.floor(mousePos.y / gridSize);
 
-                if (mouseOverOpenNode) {
-                    ctx.fillStyle = NODECOLOR.CLOSE;
-                } else {
-                    ctx.fillStyle = NODECOLOR.OPEN;
-                }
+                // if (mouseOverOpenNode) {
+                ctx.fillStyle = NODECOLOR.CLOSE;
+                // } else {
+                //     ctx.fillStyle = NODECOLOR.OPEN;
+                // }
                 ctx.fillRect(margin + nodeX * gridSize, margin + nodeY * gridSize, tileSize, tileSize);
             }
         });
