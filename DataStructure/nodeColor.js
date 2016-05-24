@@ -1,8 +1,8 @@
 var NODECOLOR = {
     OPEN: "#E0E0E0",
     CLOSE: "#707070",
-    START: "red",
-    GOAL: "green",
+    START: "#FF0000",
+    GOAL: "#008000",
     SEARCHEDNODE: "#C0C0C0",
-    PATH: "orange"
+    PATH: "#FFA500"
 };

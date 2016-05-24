@@ -63,9 +63,10 @@
             canvas.id = "routingMap";
         }
 
-        gridSize = 20;
-        tileSize = 18;
+        gridSize = 10;
         margin = 1;
+        tileSize = gridSize - margin * 2;
+
 
         canvas.width = map[0].length * gridSize;
         canvas.height = map.length * gridSize;
@@ -114,7 +115,45 @@
         });
     }
 
+    function scanCanvas() {
+        var canvas = document.getElementById("routingMap");
+        ctx = canvas.getContext("2d");
+        var width = canvas.width;
+        var height = canvas.height;
+        var imgData = ctx.getImageData(0, 0, width, height);
+
+        var getGreenValue = function(string) {
+            return parseInt(string.slice(3, 5), 16);
+        }
+
+        var realMap = [];
+        for (var i = 0; i < map.length; i++) {
+            var row = [];
+            for (var j = 0; j < map[0].length; j++) {
+                switch (imgData.data[(i * gridSize + margin) * width * 4 + (j * gridSize + margin) * 4 + 1]) {
+                    case getGreenValue(NODECOLOR.OPEN):
+                        row.push(NODETYPE.OPEN);
+                        break;
+                    case getGreenValue(NODECOLOR.CLOSE):
+                        row.push(NODETYPE.CLOSE);
+                        break;
+                    case getGreenValue(NODECOLOR.START):
+                        row.push(NODETYPE.START);
+                        break;
+                    case getGreenValue(NODECOLOR.GOAL):
+                        row.push(NODETYPE.GOAL);
+                        break;
+                    default:
+                }
+            }
+            realMap.push(row);
+        }
+
+        return realMap;
+    }
+
     function run() {
+        map = scanCanvas();
         var result = aStar(map);
 
         if (result) {
@@ -173,13 +212,18 @@
 
         canvas.addEventListener("mousemove", function(e) {
             if (mousePressing) {
-                ctx.fillStyle = NODECOLOR.CLOSE;
                 var mousePos = getMousePos(canvas, e);
                 var nodeX = Math.floor(mousePos.x / gridSize);
                 var nodeY = Math.floor(mousePos.y / gridSize);
+
+                if (mouseOverOpenNode) {
+                    ctx.fillStyle = NODECOLOR.CLOSE;
+                } else {
+                    ctx.fillStyle = NODECOLOR.OPEN;
+                }
                 ctx.fillRect(margin + nodeX * gridSize, margin + nodeY * gridSize, tileSize, tileSize);
             }
-        })
+        });
     }
 </script>
 
