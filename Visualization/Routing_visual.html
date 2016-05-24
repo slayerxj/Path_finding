@@ -12,12 +12,15 @@
     <script type="text/javascript" src="../DataStructure/tile.js"></script>
     <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
     <script type="text/javascript" src="../Algorithms/AStar.js"></script>
+    <script type="text/javascript" src="../Test/Maps/empty.js"></script>
     <script type="text/javascript" src="../Test/Maps/simpleStraight.js"></script>
     <script type="text/javascript" src="../Test/Maps/simplePoly.js"></script>
     <script type="text/javascript" src="../Test/Maps/simpleObs.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleTrap.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleTrap2.js"></script>
 </head>
 
-<body>
+<body onload="init()">
     <div class="algorithm">
         Algorithms:
         <form>
@@ -30,10 +33,13 @@
     <div class="Maps">
         Maps:
         <form>
-            <select id="maps">
+            <select id="LoadMap" onchange="init()">
+                <option value="empty"></option>
                 <option value="simpleStraight">simpleStraight</option>
                 <option value="simplePoly">simplePoly</option>
                 <option value="simpleObs">simpleObs</option>
+                <option value="simpleTrap">simpleTrap</option>
+                <option value="simpleTrap2">simpleTrap2</option>
             </select>
         </form>
     </div>
@@ -48,7 +54,7 @@
 
     function init() {
 
-        map = window[document.getElementById("maps").value].map;
+        map = window[document.getElementById("LoadMap").value].map;
 
         var canvas = document.getElementById("routingMap");
         if (!canvas) {
@@ -143,6 +149,7 @@
             };
         }
     }
+
 </script>
 
 </html>
