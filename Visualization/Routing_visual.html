@@ -42,14 +42,14 @@
 </body>
 
 <script>
-    var canvasSize, gridScale, obstaclePerc, startX, startY, endX, endY, ctx, startP, goalP, gridSize, tileSizemargin, start, goal;
-    
-    var map;
+    "use strict";
+
+    var gridSize, tileSize, margin, ctx, startP, goalP, map;
 
     function init() {
-        
+
         map = window[document.getElementById("maps").value].map;
-        
+
         var canvas = document.getElementById("routingMap");
         if (!canvas) {
             var canvas = document.createElement("canvas");
@@ -141,10 +141,8 @@
                     ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
                 }
             };
-
         }
     }
-
 </script>
 
 </html>
