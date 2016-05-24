@@ -2,10 +2,6 @@ function MinHeap() {
     this.content = [];
 };
 
-function Node(value) {
-    this.value = value;
-};
-
 MinHeap.prototype.isEmpty = function() {
     return (this.content.length === 0);
 };

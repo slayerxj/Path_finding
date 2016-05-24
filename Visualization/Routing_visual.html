@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
     <script type="text/javascript" src="../DataStructure/nodeColor.js"></script>
     <script type="text/javascript" src="../Algorithms/AStar.js"></script>
+    <script type="text/javascript" src="../Algorithms/Trace.js"></script>
     <script type="text/javascript" src="../Test/Performance/timer.js"></script>
     <script type="text/javascript" src="../Test/Maps/empty.js"></script>
     <script type="text/javascript" src="../Test/Maps/simpleStraight.js"></script>
@@ -27,8 +28,8 @@
         Algorithms:
         <form>
             <select id="Algorithms">
-                <option value="Astar">A*</option>
-                <option value="Depth">Depth first</option>
+                <option value="aStar">A*</option>
+                <option value="trace">Trace</option>
             </select>
         </form>
     </div>
@@ -151,7 +152,6 @@
             realMap.push(row);
         }
 
-
         return realMap;
     }
 
@@ -160,7 +160,8 @@
         map = scanCanvas();
         timer.stop();
         timer.start("A* path finding");
-        var result = aStar(map);
+        var algorithm = window[document.getElementById("Algorithms").value];
+        var result = algorithm(map);
         timer.stop();
 
         if (result) {
