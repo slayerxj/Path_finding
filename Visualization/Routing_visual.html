@@ -11,6 +11,7 @@
     <script type="text/javascript" src="../DataStructure/minHeap.js"></script>
     <script type="text/javascript" src="../DataStructure/tile.js"></script>
     <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
+    <script type="text/javascript" src="../DataStructure/nodeColor.js"></script>
     <script type="text/javascript" src="../Algorithms/AStar.js"></script>
     <script type="text/javascript" src="../Test/Maps/empty.js"></script>
     <script type="text/javascript" src="../Test/Maps/simpleStraight.js"></script>
@@ -50,7 +51,7 @@
 <script>
     "use strict";
 
-    var gridSize, tileSize, margin, ctx, startP, goalP, map;
+    var map, gridSize, tileSize, margin, ctx, startP, goalP;
 
     function init() {
 
@@ -73,6 +74,7 @@
         canvas.style.left = "20px";
         canvas.style.border = "1px solid #000000";
         document.body.appendChild(canvas);
+        edit();
 
         ctx = canvas.getContext("2d");
 
@@ -80,12 +82,12 @@
             row.forEach(function(tileType, colNum) {
                 switch (tileType) {
                     case NODETYPE.OPEN:
-                        ctx.fillStyle = "#E0E0E0";
+                        ctx.fillStyle = NODECOLOR.OPEN;
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
                     case NODETYPE.CLOSE:
-                        ctx.fillStyle = "#707070";
+                        ctx.fillStyle = NODECOLOR.CLOSE;
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
@@ -94,7 +96,7 @@
                             x: rowNum,
                             y: colNum
                         };
-                        ctx.fillStyle = "red";
+                        ctx.fillStyle = NODECOLOR.START;
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
 
@@ -103,7 +105,7 @@
                             x: rowNum,
                             y: colNum
                         };
-                        ctx.fillStyle = "green";
+                        ctx.fillStyle = NODECOLOR.GOAL;
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
                     default:
@@ -129,7 +131,7 @@
                     var value = searchedNode[i];
                     i++;
                     if (!(value.x === goal.x && value.y === goal.y)) {
-                        ctx.fillStyle = "#C0C0C0";
+                        ctx.fillStyle = NODECOLOR.SEARCHEDNODE;
                         ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
                     }
                 }
@@ -143,13 +145,42 @@
                 } else {
                     var value = path[i];
                     i--;
-                    ctx.fillStyle = "orange";
+                    ctx.fillStyle = NODECOLOR.PATH;
                     ctx.fillRect(margin + value.x * gridSize, margin + value.y * gridSize, tileSize, tileSize);
                 }
             };
         }
     }
 
+    function edit() {
+        var mousePressing = false;
+        var canvas = document.getElementById("routingMap");
+        canvas.addEventListener("mousedown", function(e) {
+            mousePressing = true;
+        });
+
+        canvas.addEventListener("mouseup", function(e) {
+            mousePressing = false;
+        });
+
+        var getMousePos = function(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        };
+
+        canvas.addEventListener("mousemove", function(e) {
+            if (mousePressing) {
+                ctx.fillStyle = NODECOLOR.CLOSE;
+                var mousePos = getMousePos(canvas, e);
+                var nodeX = Math.floor(mousePos.x / gridSize);
+                var nodeY = Math.floor(mousePos.y / gridSize);
+                ctx.fillRect(margin + nodeX * gridSize, margin + nodeY * gridSize, tileSize, tileSize);
+            }
+        })
+    }
 </script>
 
 </html>
