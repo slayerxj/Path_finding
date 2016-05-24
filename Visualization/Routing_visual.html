@@ -55,32 +55,9 @@
 
     var map, gridSize, tileSize, margin, ctx, startP, goalP;
 
-    function init() {
-
-        map = window[document.getElementById("LoadMap").value].map;
-
+    function renderMap() {
         var canvas = document.getElementById("routingMap");
-        if (!canvas) {
-            var canvas = document.createElement("canvas");
-            canvas.id = "routingMap";
-        }
-
-        gridSize = 20;
-        margin = 1;
-        tileSize = gridSize - margin * 2;
-
-
-        canvas.width = map[0].length * gridSize;
-        canvas.height = map.length * gridSize;
-        canvas.style.position = "absolute";
-        canvas.style.top = "120px";
-        canvas.style.left = "20px";
-        canvas.style.border = "1px solid #000000";
-        document.body.appendChild(canvas);
-        edit();
-
         ctx = canvas.getContext("2d");
-
         map.forEach(function(row, rowNum) {
             row.forEach(function(tileType, colNum) {
                 switch (tileType) {
@@ -115,6 +92,32 @@
                 }
             });
         });
+    }
+
+    function init() {
+
+        map = window[document.getElementById("LoadMap").value].map;
+
+        var canvas = document.getElementById("routingMap");
+        if (!canvas) {
+            var canvas = document.createElement("canvas");
+            canvas.id = "routingMap";
+        }
+
+        gridSize = 20;
+        margin = 1;
+        tileSize = gridSize - margin * 2;
+
+
+        canvas.width = map[0].length * gridSize;
+        canvas.height = map.length * gridSize;
+        canvas.style.position = "absolute";
+        canvas.style.top = "120px";
+        canvas.style.left = "20px";
+        canvas.style.border = "1px solid #000000";
+        document.body.appendChild(canvas);
+        edit();
+        renderMap();
     };
 
     function scanCanvas() {
@@ -147,6 +150,8 @@
                         row.push(NODETYPE.GOAL);
                         break;
                     default:
+                        row.push(NODETYPE.OPEN);
+                        break;
                 }
             }
             realMap.push(row);
@@ -158,6 +163,7 @@
     function run() {
         timer.start("Scan canvas");
         map = scanCanvas();
+        renderMap();
         timer.stop();
         timer.start("A* path finding");
         var algorithm = window[document.getElementById("Algorithms").value];
@@ -173,7 +179,7 @@
                 if (i === searchedNode.length) {
                     clearInterval(id);
                     i = path.length - 1;
-                    id = setInterval(pathFrame, 33);
+                    id = setInterval(pathFrame, 20);
                 } else {
                     var value = searchedNode[i];
                     i++;
@@ -184,7 +190,7 @@
                 }
             };
 
-            var id = setInterval(frame, 33);
+            var id = setInterval(frame, 20);
 
             var pathFrame = function() {
                 if (i < 0) {

@@ -82,42 +82,6 @@ var trace = function (map) {
     return null;
 };
 
-// var a, u, h, l, p, c, f, d, g = new i(function (t, e) {
-//     return t.f - e.f
-// }),
-//     y = s.getNodeAt(t, e),
-//     b = s.getNodeAt(r, o),
-//     A = this.heuristic,
-//     k = this.allowDiagonal,
-//     m = this.dontCrossCorners,
-//     v = Math.abs,
-//     w = Math.SQRT2;
-// for (y.g = 0,
-//     y.f = 0,
-//     g.push(y),
-//     y.opened = !0; !g.empty();) {
-//     if (a = g.pop(),
-//         a.closed = !0,
-//         a === b)
-//         return n.backtrace(b);
-//     u = s.getNeighbors(a, k, m);
-//     var x = u.length;
-//     for (l = 0,
-//         p = u.length; p > l; ++l)
-//         h = u[l],
-//             h.closed || (c = h.x,
-//                 f = h.y,
-//                 d = a.g + (0 === c - a.x || 0 === f - a.y ? 1 : w),
-//                 (!h.opened || d < h.g) && (h.g = d * x / 9,
-//                     h.h = h.h || A(v(c - r), v(f - o)),
-//                     h.f = h.g + h.h,
-//                     h.parent = a,
-//                     h.opened ? g.updateItem(h) : (g.push(h),
-//                         h.opened = !0)))
-// }
-// return [];
-
-
 var reconstructPath = function (current) {
     var totalPath = [current];
 
@@ -144,5 +108,3 @@ var initSearchGrid = function (map) {
         }
     }
 }
-
-
