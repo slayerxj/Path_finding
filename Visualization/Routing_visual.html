@@ -102,12 +102,13 @@
         if (!canvas) {
             var canvas = document.createElement("canvas");
             canvas.id = "routingMap";
+            document.body.appendChild(canvas);
+            edit();
         }
 
         gridSize = 20;
         margin = 1;
         tileSize = gridSize - margin * 2;
-
 
         canvas.width = map[0].length * gridSize;
         canvas.height = map.length * gridSize;
@@ -115,8 +116,7 @@
         canvas.style.top = "120px";
         canvas.style.left = "20px";
         canvas.style.border = "1px solid #000000";
-        document.body.appendChild(canvas);
-        edit();
+
         renderMap();
     };
 
@@ -206,10 +206,26 @@
     }
 
     function edit() {
+        var isBlacking = true;
         var mousePressing = false;
         var canvas = document.getElementById("routingMap");
         canvas.addEventListener("mousedown", function(e) {
             mousePressing = true;
+            var mousePos = getMousePos(canvas, e);
+            var canvas = document.getElementById("routingMap");
+            ctx = canvas.getContext("2d");
+            var width = canvas.width;
+            var height = canvas.height;
+            var imgData = ctx.getImageData(0, 0, width, height);
+
+            var getGreenValue = function(string) {
+                return parseInt(string.slice(3, 5), 16);
+            }
+
+            isBlacking = (imgData.data[mousePos.y * width * 4 + mousePos.x * 4 + 1] !== getGreenValue(NODECOLOR.CLOSE));
+            console.log(isBlacking);
+
+            render(e);
         });
 
         canvas.addEventListener("mouseout", function(e) {
@@ -221,6 +237,7 @@
         });
 
         var getMousePos = function(canvas, evt) {
+            var canvas = document.getElementById("routingMap");
             var rect = canvas.getBoundingClientRect();
             return {
                 x: evt.clientX - rect.left,
@@ -228,18 +245,28 @@
             };
         };
 
+        var render = function(e) {
+            var canvas = document.getElementById("routingMap");
+            ctx = canvas.getContext("2d");
+            var mousePos = getMousePos(canvas, e);
+            var nodeX = Math.floor(mousePos.x / gridSize);
+            var nodeY = Math.floor(mousePos.y / gridSize);
+
+            if (map[nodeY][nodeX] === NODETYPE.START || map[nodeY][nodeX] === NODETYPE.GOAL) {
+                return;
+            }
+
+            if (isBlacking) {
+                ctx.fillStyle = NODECOLOR.CLOSE;
+            } else {
+                ctx.fillStyle = NODECOLOR.OPEN;
+            }
+            ctx.fillRect(margin + nodeX * gridSize, margin + nodeY * gridSize, tileSize, tileSize);
+        };
+
         canvas.addEventListener("mousemove", function(e) {
             if (mousePressing) {
-                var mousePos = getMousePos(canvas, e);
-                var nodeX = Math.floor(mousePos.x / gridSize);
-                var nodeY = Math.floor(mousePos.y / gridSize);
-
-                // if (mouseOverOpenNode) {
-                ctx.fillStyle = NODECOLOR.CLOSE;
-                // } else {
-                //     ctx.fillStyle = NODECOLOR.OPEN;
-                // }
-                ctx.fillRect(margin + nodeX * gridSize, margin + nodeY * gridSize, tileSize, tileSize);
+                render(e);
             }
         });
     }
