@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Visible A* search algorithm, fulfill by HTML5 canvas, concerntrate the performance in JavaScript">
+    <meta name="author" content="Xiong Jie">
+    <title>A* search algorithm in JavaScript</title>
+    <link rel="stylesheet" type="text/css" href="testPage.css">
+    <script type="text/javascript" src="../Utils/heuristic.js"></script>
+    <script type="text/javascript" src="../DataStructure/minHeap.js"></script>
+    <script type="text/javascript" src="../DataStructure/tile.js"></script>
+    <script type="text/javascript" src="../DataStructure/nodeType.js"></script>
+    <script type="text/javascript" src="../DataStructure/nodeColor.js"></script>
+    <script type="text/javascript" src="../Algorithms/AStar.js"></script>
+    <!-- <script type="text/javascript" src="../Algorithms/Trace.js"></script> -->
+    <script type="text/javascript" src="../Test/Performance/timer.js"></script>
+    <script type="text/javascript" src="../Test/Maps/empty.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleStraight.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simplePoly.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleObs.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleTrap.js"></script>
+    <script type="text/javascript" src="../Test/Maps/simpleTrap2.js"></script>
+</head>
+
+<body onload="init()">
+    <div class="algorithm">
+        Algorithms:
+        <form>
+            <select id="Algorithms">
+                <option value="aStar">A*</option>
+                <option value="trace">Trace</option>
+            </select>
+        </form>
+        <p id="result"> </p>
+        <button type="button" onclick="test()">test</button>
+    </div>
+
+</body>
+
+<script>
+    "use strict";
+
+    // var map, maps = ["simpleStraight", "simplePoly", "simpleObs", "simpleTrap", "simpleTrap2"],
+    var map, maps = ["simpleObs"],
+        gridSize, tileSize, margin, ctx, startP, goalP;
+
+    function renderMap(canvas) {
+        ctx = canvas.getContext("2d");
+        map.forEach(function(row, rowNum) {
+            row.forEach(function(tileType, colNum) {
+                switch (tileType) {
+                    case NODETYPE.OPEN:
+                        ctx.fillStyle = NODECOLOR.OPEN;
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case NODETYPE.CLOSE:
+                        ctx.fillStyle = NODECOLOR.CLOSE;
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case NODETYPE.START:
+                        startP = {
+                            x: rowNum,
+                            y: colNum
+                        };
+                        ctx.fillStyle = NODECOLOR.START;
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+
+                    case NODETYPE.GOAL:
+                        goalP = {
+                            x: rowNum,
+                            y: colNum
+                        };
+                        ctx.fillStyle = NODECOLOR.GOAL;
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
+                    default:
+                }
+            });
+        });
+    }
+
+    function init() {
+
+        for (var i = 0; i < maps.length; i++) {
+            map = window[maps[i]].map;
+
+            var canvas = document.getElementById("routingMap" + i);
+            if (!canvas) {
+                var canvas = document.createElement("canvas");
+                canvas.id = "routingMap" + i;
+                document.body.appendChild(canvas);
+            }
+
+            gridSize = 10;
+            margin = 1;
+            tileSize = gridSize - margin * 2;
+
+            canvas.width = map[0].length * gridSize;
+            canvas.height = map.length * gridSize;
+
+            canvas.style.top = "120px";
+            canvas.style.left = "120px";
+            canvas.style.border = "1px solid #000000";
+
+            renderMap(canvas);
+        }
+    };
+
+    function test() {
+        maps.forEach(function(map) {
+            var result = run(window[map].map);
+            var compareResult = compare(result, window[map].correctPath);
+            show(compareResult);
+        });
+    };
+
+    function show(string) {
+        document.getElementById("result").innerHTML = string;
+    }
+
+    function pathfy(nodes) {
+        var path = [nodes[0]];
+        var i = 2;
+        while (i < nodes.length) {
+            if ((nodes[i].x !== path[path.length - 1].x) && (nodes[i].y !== path[path.length - 1].y)) {
+                path.push(nodes[i - 1]);
+            }
+            i++;
+        }
+
+        path.push(nodes[nodes.length - 1]);
+
+        return path;
+    };
+
+    function run(map) {
+        var algorithm = window[document.getElementById("Algorithms").value];
+        var nodes = algorithm(map).path;
+        return pathfy(nodes);
+    };
+
+    function calculateOverallLength(path) {
+        var overallLength = 0;
+        for (var i = 0; i < path.length - 1; i++) {
+            if (path[i].x === path[i + 1].x) {
+                overallLength = overallLength + Math.abs(path[i].y - path[i + 1].y);
+            } else {
+                overallLength = overallLength + Math.abs(path[i].x - path[i + 1].x);
+            }
+        }
+
+        return overallLength;
+    }
+
+    function compare(result, correctPath) {
+        if (result.length !== correctPath.length) {
+            return "The number of segment is not correct";
+        }
+
+        if (calculateOverallLength(result) !== calculateOverallLength(correctPath)) {
+            return "The overall length is not correct";
+        }
+
+        return "pass";
+    };
+</script>
+
+</html>

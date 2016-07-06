@@ -92,7 +92,7 @@ var reconstructPath = function (current) {
         totalPath.push(current);
     }
 
-    totalPath = totalPath.slice(1, totalPath.length - 1);
+    // totalPath = totalPath.slice(1, totalPath.length - 1);
     return totalPath;
 };
 
