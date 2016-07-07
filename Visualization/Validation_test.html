@@ -24,25 +24,32 @@
 </head>
 
 <body onload="init()">
-    <div class="algorithm">
-        Algorithms:
-        <form>
-            <select id="Algorithms">
-                <option value="aStar">A*</option>
-                <option value="trace">Trace</option>
-            </select>
-        </form>
-        <p id="result"> </p>
+    <div id="algorithm">
+        <div class="algorithm">
+            <p>Algorithms:</p>
+        </div>
+        <div class="algorithm">
+            <form>
+                <select id="Algorithms">
+                    <option value="aStar">A*</option>
+                    <!-- <option value="trace">Trace</option> -->
+                </select>
+            </form>
+        </div>
         <button type="button" onclick="test()">test</button>
+        <div class="algorithm">
+            <p>Overall result: </p>
+        </div>
     </div>
-
+    <div id="testCases">
+    </div>
 </body>
 
 <script>
     "use strict";
 
     // var map, maps = ["simpleStraight", "simplePoly", "simpleObs", "simpleTrap", "simpleTrap2"],
-    var map, maps = ["simpleObs"],
+    var map, maps = ["simpleStraight", "simpleObs"],
         gridSize, tileSize, margin, ctx, startP, goalP;
 
     function renderMap(canvas) {
@@ -77,6 +84,15 @@
                         ctx.fillStyle = NODECOLOR.GOAL;
                         ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
                         break;
+
+                    case NODETYPE.PATH:
+                        goalP = {
+                            x: rowNum,
+                            y: colNum
+                        };
+                        ctx.fillStyle = NODECOLOR.PATH;
+                        ctx.fillRect(margin + colNum * gridSize, margin + rowNum * gridSize, tileSize, tileSize);
+                        break;
                     default:
                 }
             });
@@ -84,31 +100,100 @@
     }
 
     function init() {
-
         for (var i = 0; i < maps.length; i++) {
             map = window[maps[i]].map;
 
-            var canvas = document.getElementById("routingMap" + i);
-            if (!canvas) {
-                var canvas = document.createElement("canvas");
-                canvas.id = "routingMap" + i;
-                document.body.appendChild(canvas);
-            }
+            var div = document.createElement("div");
+            div.id = "routingMap" + i;
+            document.getElementById("testCases").appendChild(div);
 
             gridSize = 10;
             margin = 1;
             tileSize = gridSize - margin * 2;
 
-            canvas.width = map[0].length * gridSize;
-            canvas.height = map.length * gridSize;
+            var createCanvas = function(id) {
+                var canvas = document.createElement("canvas");
+                canvas.id = id;
+                canvas.width = map[0].length * gridSize;
+                canvas.height = map.length * gridSize;
 
-            canvas.style.top = "120px";
-            canvas.style.left = "120px";
-            canvas.style.border = "1px solid #000000";
+                canvas.style.top = "120px";
+                canvas.style.left = "120px";
+                canvas.style.border = "1px solid #000000";
+                div.appendChild(canvas);
+                renderMap(canvas);
+            }
 
-            renderMap(canvas);
+            createCanvas("routingMap" + i);
+            map = generateMapWithCorrectResult(maps[i]);
+            createCanvas("routingMap_correctResult" + i);
+            map = window[maps[i]].map;
+            createCanvas("routingMap_result" + i);
+
+            var p = document.createElement("p");
+            p.innerHTML = "Result: ";
+            div.appendChild(p);
         }
     };
+
+    var nodesfy = function(originMap, correctResult) {
+        var map = [];
+        originMap.forEach(function(cur) {
+            map.push(cur.slice(0));
+        });
+        var start, goal;
+        map.forEach(function(row, rowNum) {
+            row.forEach(function(node, colNum) {
+                if (node === NODETYPE.START) {
+                    start = {
+                        x: rowNum,
+                        y: colNum
+                    };
+                } else if (node === NODETYPE.GOAL) {
+                    goal = {
+                        x: rowNum,
+                        y: colNum
+                    };
+                }
+            });
+        });
+
+        var i = 0;
+        while (i < correctResult.length - 1) {
+            if (correctResult[i].x === correctResult[i + 1].x) {
+                var lower = correctResult[i].y;
+                var higher = correctResult[i + 1].y;
+                if (correctResult[i].y > correctResult[i + 1].y) {
+                    lower = correctResult[i + 1].y;
+                    higher = correctResult[i].y;
+                }
+                for (var j = lower; j <= higher; j++) {
+                    map[j][correctResult[i].x] = NODETYPE.PATH;
+                }
+            } else {
+                var lower = correctResult[i].x;
+                var higher = correctResult[i + 1].x;
+                if (lower > higher) {
+                    lower = correctResult[i + 1].x;
+                    higher = correctResult[i].x;
+                }
+                for (var j = lower; j <= higher; j++) {
+                    map[correctResult[i].y][j] = NODETYPE.PATH;
+                }
+            }
+
+            i++;
+        }
+
+        map[start.x][start.y] = NODETYPE.START;
+        map[goal.x][goal.y] = NODETYPE.GOAL;
+        return map;
+    }
+    var generateMapWithCorrectResult = function(mapName) {
+        var originMap = window[mapName].map;
+        var correctResult = window[mapName].correctPath;
+        return nodesfy(originMap, correctResult);
+    }
 
     function test() {
         maps.forEach(function(map) {
