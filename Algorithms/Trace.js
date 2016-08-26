@@ -31,7 +31,7 @@ var distBetween = function (nodeA, nodeB) {
 var trace = function (map) {
     initSearchGrid(map);
     var searchedNode = [];
-    var openList = new MinHeap();
+    var openList = new MinBinaryHeap();
     var heuristic = manhattan;
     openList.insert(start);
     start.open = true;

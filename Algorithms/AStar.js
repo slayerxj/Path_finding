@@ -31,7 +31,20 @@ var distBetween = function (nodeA, nodeB) {
 var aStar = function (map) {
     initSearchGrid(map);
     var searchedNode = [];
-    var openList = new MinHeap();
+    var testHeap = new PairingHeap();
+    var values = [2, 7, 3, 5, 3, 5345, 35, 3, 3, 345, 5234, 23, 6, 678, 0, 0, 68, 567, 462, 42, 23, 356, 45768];
+    values.forEach(function (value) {
+        var object = { "value": value };
+        testHeap.insert(object);
+    });
+
+    while (testHeap && testHeap.element) {
+        console.log(testHeap.element.value);
+        testHeap = testHeap.extractMinimum();
+    }
+
+    return;
+    var openList = new MinBinaryHeap();
     var heuristic = manhattan;
     openList.insert(start);
     start.open = true;

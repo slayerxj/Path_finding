@@ -1,19 +1,19 @@
-function MinHeap() {
+function MinBinaryHeap() {
     this.content = [];
 };
 
-MinHeap.prototype.isEmpty = function() {
+MinBinaryHeap.prototype.isEmpty = function() {
     return (this.content.length === 0);
 };
 
-MinHeap.prototype.swap = function(indexA, indexB) {
+MinBinaryHeap.prototype.swap = function(indexA, indexB) {
     var heap = this.content;
     var temp = heap[indexA];
     heap[indexA] = heap[indexB];
     heap[indexB] = temp;
 };
 
-MinHeap.prototype.upHeap = function(index) {
+MinBinaryHeap.prototype.upHeap = function(index) {
     if (index === 0) {
         return;
     }
@@ -24,7 +24,7 @@ MinHeap.prototype.upHeap = function(index) {
     }
 };
 
-MinHeap.prototype.downHeap = function(index) {
+MinBinaryHeap.prototype.downHeap = function(index) {
     var heap = this.content;
     var tail = heap.length - 1;
 
@@ -53,22 +53,22 @@ MinHeap.prototype.downHeap = function(index) {
     }
 };
 
-MinHeap.prototype.findMinimum = function() {
+MinBinaryHeap.prototype.findMinimum = function() {
     return this.content[0];
 };
 
-MinHeap.prototype.insert = function(node) {
+MinBinaryHeap.prototype.insert = function(node) {
     var heap = this.content;
     var tail = heap.length;
     heap.push(node);
     this.upHeap(tail);
 };
 
-MinHeap.prototype.extractMinimum = function(index) {
+MinBinaryHeap.prototype.extractMinimum = function() {
     this.extract(0);
 };
 
-MinHeap.prototype.extract = function(index) {
+MinBinaryHeap.prototype.extract = function(index) {
     var heap = this.content;
     var tail = heap.length - 1;
     this.swap(index, tail);
@@ -78,11 +78,11 @@ MinHeap.prototype.extract = function(index) {
     return temp;
 };
 
-MinHeap.prototype.delete = function(node) {
+MinBinaryHeap.prototype.delete = function(node) {
     return this.extract(this.content.indexOf(node));
 };
 
-MinHeap.prototype.checkHeap = function() {
+MinBinaryHeap.prototype.checkHeap = function() {
     return this.content.some(function(cur, i, array) {
         if (i === 0) {
             return false;
@@ -96,4 +96,4 @@ MinHeap.prototype.checkHeap = function() {
     })
 };
 
-// module.exports = MinHeap;
+// module.exports = MinBinaryHeap;
